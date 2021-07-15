@@ -74,12 +74,19 @@ int calculaPermanencia(char *entrada, char *saida)
     return 0;
   }
 
-  intervalo_entrada = (horas_entrada * 60)  +minutos_entrada;
+  intervalo_entrada = (horas_entrada * 60)  + minutos_entrada;
   intervalo_saida = (horas_saida * 60) + minutos_saida;
 
+  if (horas_entrada > 7 && horas_saida >= 0 && horas_saida < 4){
+    intervalo_saida = intervalo_saida + 1440;
+  }
+  
   if (intervalo_saida > intervalo_entrada)
   {
     intervalo = intervalo_saida - intervalo_entrada;
+  }
+  else {
+      printf("Erro ao calcular intervalo\n");
   }
 
   printf("Intervalo em minutos -> %d \n", intervalo);
@@ -99,17 +106,21 @@ float calculaPreco(int horas_consideradas)
 
   if (horas_consideradas > 0)
   {
-    if (horas_consideradas < 2)
+    if (horas_consideradas >= 1)
     {
       total = total + 8.00;
     }
-    if (horas_consideradas >= 2 &&  horas_consideradas <= 3)
+    if (horas_consideradas >= 2)
     {
       total = total + 5.00;
     }
+    if (horas_consideradas >= 3)
+    {
+        total = total + 5.00;
+    }
     if (horas_consideradas >= 4 )
     {
-      total = total + (horas_consideradas * 3.50);
+      total = total + ((horas_consideradas -3) * 3.50);
     }
   }
   return total;
@@ -124,6 +135,7 @@ int main()
   int saida_validada = 0;
   int horas_consideradas, leitura, i;
   float total = 0.00;
+  float faturamento = 0.00;
 
   printf("Arquivo para processar -> ");
   scanf("%s", nome_arquivo);
@@ -146,12 +158,14 @@ int main()
         printf("Horas consideradas -> %d \n", horas_consideradas);
         total = calculaPreco(horas_consideradas);
       }
-      printf("Faturamento total ==> R$ %.2f \n", total);
+      printf("Total ==> R$ %.2f \n", total);
+      faturamento = faturamento + total;
     }
     i++;
   }
 
   fclose(arquivo);
+  printf("Faturamento total ==> R$ %.2f \n", faturamento);
 
   return(0);
 }
