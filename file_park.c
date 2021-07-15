@@ -112,53 +112,46 @@ float calculaPreco(int horas_consideradas)
       total = total + (horas_consideradas * 3.50);
     }
   }
-
-  printf("\nValor a ser pago -> R$ %.2f \n", total);
-  return 1;
+  return total;
 }
 
 int main()
 {
-  char entrada[80];
-  char saida[80];
+  char entrada[10];
+  char saida[10];
+  char nome_arquivo[80];
   int entrada_validada = 0;
   int saida_validada = 0;
-  int horas_consideradas, i;
+  int horas_consideradas, leitura, i;
   float total = 0.00;
-  char nome_arquivo[80];
-  char Linha[100];
-  char *result;
 
   printf("Arquivo para processar -> ");
-  fgets(nome_arquivo, sizeof(nome_arquivo), stdin);
+  scanf("%s", nome_arquivo);
 
-  FILE* arquivo = fopen(nome_arquivo, "r");
+  FILE* arquivo = fopen(nome_arquivo, "rt");
   if(arquivo == NULL) {
       fprintf(stderr, "\nERRO - Erro ao abrir o arquivo.\n");
       return 1;
   }
 
   while(!feof(arquivo)){
-    // Lê uma linha (inclusive com o '\n')
-    result = fgets(Linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
-    if (result)  // Se foi possível ler
-    printf("Linha %d : %s",i,Linha);
+    printf("\nLinha %d\n", i);
+    leitura = fscanf(arquivo, "%s %s", entrada, saida);
+    if (leitura){
+      entrada_validada = validaHorario(entrada);
+      saida_validada = validaHorario(saida);
+      if (entrada_validada && saida_validada)
+      {
+        horas_consideradas = calculaPermanencia(entrada, saida);
+        printf("Horas consideradas -> %d \n", horas_consideradas);
+        total = calculaPreco(horas_consideradas);
+      }
+      printf("Faturamento total ==> R$ %.2f \n", total);
+    }
     i++;
   }
 
   fclose(arquivo);
-
-  entrada_validada = validaHorario(entrada);
-  saida_validada = validaHorario(saida);
-
-  if (entrada_validada && saida_validada)
-  {
-    horas_consideradas = calculaPermanencia(entrada, saida);
-    printf("Horas consideradas -> %d \n", horas_consideradas);
-    total = calculaPreco(horas_consideradas);
-  }
-
-  printf("\nFaturamento total ==> R$ %.2f \n", total);
 
   return(0);
 }
