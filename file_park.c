@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 int verificaNumero(char *horario) {
   int i;
@@ -91,7 +92,7 @@ int calculaPermanencia(char *entrada, char *saida)
   return horas_consideradas;
 }
 
-int calculaPreco(int horas_consideradas)
+float calculaPreco(int horas_consideradas)
 {
   float total = 0.00;
   int horas, minutos;
@@ -122,28 +123,42 @@ int main()
   char saida[80];
   int entrada_validada = 0;
   int saida_validada = 0;
-  int horas_consideradas;
+  int horas_consideradas, i;
+  float total = 0.00;
+  char nome_arquivo[80];
+  char Linha[100];
+  char *result;
 
-  while (!entrada_validada)
-  {
-    printf("Horario de entrada -> ");
-    fgets(entrada, sizeof(entrada), stdin);
-    entrada_validada = validaHorario(entrada);
+  printf("Arquivo para processar -> ");
+  fgets(nome_arquivo, sizeof(nome_arquivo), stdin);
+
+  FILE* arquivo = fopen(nome_arquivo, "r");
+  if(arquivo == NULL) {
+      fprintf(stderr, "\nERRO - Erro ao abrir o arquivo.\n");
+      return 1;
   }
 
-  while (!saida_validada)
-  {
-    printf("Horario de saida -> ");
-    fgets(saida, sizeof(saida), stdin);
-    saida_validada = validaHorario(saida);
+  while(!feof(arquivo)){
+    // Lê uma linha (inclusive com o '\n')
+    result = fgets(Linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
+    if (result)  // Se foi possível ler
+    printf("Linha %d : %s",i,Linha);
+    i++;
   }
+
+  fclose(arquivo);
+
+  entrada_validada = validaHorario(entrada);
+  saida_validada = validaHorario(saida);
 
   if (entrada_validada && saida_validada)
   {
     horas_consideradas = calculaPermanencia(entrada, saida);
     printf("Horas consideradas -> %d \n", horas_consideradas);
-    calculaPreco(horas_consideradas);
+    total = calculaPreco(horas_consideradas);
   }
+
+  printf("\nFaturamento total ==> R$ %.2f \n", total);
 
   return(0);
 }
